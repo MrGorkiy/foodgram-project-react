@@ -1,5 +1,5 @@
-from django.core.exceptions import ValidationError
 import django_filters as filters
+from django.core.exceptions import ValidationError
 
 from recipe.models import Ingredient, Recipe, User
 
@@ -8,14 +8,15 @@ class TagsMultipleChoiceField(filters.fields.MultipleChoiceField):
     def validate(self, value):
         if self.required and not value:
             raise ValidationError(
-                self.error_messages['required'],
-                code='required')
+                self.error_messages["required"], code="required"
+            )
         for val in value:
             if val in self.choices and not self.valid_value(val):
                 raise ValidationError(
-                    self.error_messages['invalid_choice'],
-                    code='invalid_choice',
-                    params={'value': val}, )
+                    self.error_messages["invalid_choice"],
+                    code="invalid_choice",
+                    params={"value": val},
+                )
 
 
 class TagsFilter(filters.AllValuesMultipleFilter):
@@ -23,29 +24,48 @@ class TagsFilter(filters.AllValuesMultipleFilter):
 
 
 class IngredientFilter(filters.FilterSet):
-    name = filters.CharFilter(lookup_expr='istartswith')
+    """Фильтрация ингридиентов"""
+
+    name = filters.CharFilter(lookup_expr="istartswith")
 
     class Meta:
         model = Ingredient
-        fields = ('name',)
+        fields = ("name",)
+
+
+RECIPE_CHOICES = (
+    (0, "Not_In_List"),
+    (1, "In_List"),
+)
 
 
 class RecipeFilter(filters.FilterSet):
-    author = filters.ModelChoiceFilter(
-        queryset=User.objects.all())
-    is_in_shopping_cart = filters.BooleanFilter(
-        field_name="shopping_cart",
-        widget=filters.widgets.BooleanWidget(),
-        label='В корзине.')
-    # print(Recipe.objects.filter(recipe_favorite__user__username='shopping_cart__user'))
-    is_favorited = filters.BooleanFilter(
-        field_name="recipe_favorite__user",
-        widget=filters.widgets.BooleanWidget(),
-        label='В избранных.')
+    """Фильтрация рецептов"""
+
+    author = filters.ModelChoiceFilter(queryset=User.objects.all())
+    is_in_shopping_cart = filters.ChoiceFilter(
+        choices=RECIPE_CHOICES, method="get_is_in"
+    )
+    is_favorited = filters.ChoiceFilter(
+        choices=RECIPE_CHOICES, method="get_is_in"
+    )
     tags = filters.AllValuesMultipleFilter(
-        field_name='tags__slug',
-        label='Ссылка')
+        field_name="tags__slug", label="Ссылка"
+    )
+
+    def get_is_in(self, queryset, name, value):
+        """
+        Фильтрация рецептов по избранному и списку покупок.
+        """
+        user = self.request.user
+        if user.is_authenticated:
+            if value == "1":
+                if name == "is_favorited":
+                    queryset = queryset.filter(recipe_favorite__user=user)
+                if name == "is_in_shopping_cart":
+                    queryset = queryset.filter(shopping_cart__user=user)
+        return queryset
 
     class Meta:
         model = Recipe
-        fields = ['is_favorited', 'is_in_shopping_cart', 'author', 'tags']
+        fields = ["is_favorited", "is_in_shopping_cart", "author", "tags"]

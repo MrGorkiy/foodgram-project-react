@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import *
+from .models import (Favorite, Follow, Ingredient, IngredientRecipe, Recipe,
+                     ShoppingCart, Tag, User)
 
 
 @admin.register(User)
@@ -65,35 +66,68 @@ class IngredientAdmin(admin.ModelAdmin):
         "name",
         "measurement_unit",
     )
-    search_fields = (
-        "name",
-    )
-    list_editable = (
-        "measurement_unit",
-    )
-    list_filter = (
-        "name",
-    )
+    search_fields = ("name",)
+    list_editable = ("measurement_unit",)
+    list_filter = ("name",)
     empty_value_display = "-пусто-"
+
+
+class RecipeIngredientAdmin(admin.StackedInline):
+    model = IngredientRecipe
+    autocomplete_fields = ("ingredient",)
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "name",
+        "get_ingredients",
+        "get_tags",
         "author",
+        "get_favorite_count",
     )
     search_fields = (
         "name",
         "author",
         "tags",
+        "author__email",
+        "ingredients__name",
     )
     list_filter = (
         "name",
         "author",
         "tags",
     )
+    inlines = (RecipeIngredientAdmin,)
+    readonly_fields = ["get_favorite_count"]
     empty_value_display = "-пусто-"
+
+    def get_tags(self, obj):
+        list_ = [_.name for _ in obj.tags.all()]
+        return ", ".join(list_)
+
+    get_tags.short_description = "Тэги"
+
+    def get_ingredients(self, obj):
+        return "\n ".join(
+            [
+                f'{item["ingredient__name"]} - {item["amount"]}'
+                f' {item["ingredient__measurement_unit"]}.'
+                for item in obj.recipe.values(
+                    "ingredient__name",
+                    "amount",
+                    "ingredient__measurement_unit",
+                )
+            ]
+        )
+
+    get_ingredients.short_description = "Ингредиенты"
+
+    def get_favorite_count(self, obj):
+        return obj.recipe_favorite.count()
+
+    get_favorite_count.short_description = "В избранном"
 
 
 @admin.register(IngredientRecipe)
@@ -112,9 +146,7 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
         "ingredient",
         "amount",
     )
-    list_filter = (
-        "recipe",
-    )
+    list_filter = ("recipe",)
     empty_value_display = "-пусто-"
 
 
@@ -124,6 +156,7 @@ class FavoriteAdmin(admin.ModelAdmin):
         "pk",
         "user",
         "recipe",
+        "get_count",
     )
     search_fields = (
         "recipe",
@@ -134,6 +167,11 @@ class FavoriteAdmin(admin.ModelAdmin):
         "user",
     )
     empty_value_display = "-пусто-"
+
+    def get_count(self, obj):
+        return obj.recipe.recipe_favorite.count()
+
+    get_count.short_description = "В избранных"
 
 
 @admin.register(ShoppingCart)
@@ -141,6 +179,8 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
         "user",
+        "get_recipe",
+        "get_count",
     )
     search_fields = (
         "recipe",
@@ -151,3 +191,13 @@ class ShoppingCartAdmin(admin.ModelAdmin):
         "user",
     )
     empty_value_display = "-пусто-"
+
+    def get_recipe(self, obj):
+        return [f"{obj.recipe.name}"]
+
+    get_recipe.short_description = "Рецепт"
+
+    def get_count(self, obj):
+        return obj.recipe.recipe_favorite.count()
+
+    get_count.short_description = "В избранных"

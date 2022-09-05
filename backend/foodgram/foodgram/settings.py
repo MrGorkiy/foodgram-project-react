@@ -1,8 +1,13 @@
 import os
 
-from datetime import timedelta
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DB_ENGINE = os.getenv('DB_ENGINE', default='django.db.backends.sqlite3')
+DB_NAME = os.getenv('DB_NAME', default=os.path.join(BASE_DIR, 'db.sqlite3'))
+DB_USER = os.getenv('POSTGRES_USER', default='postgres')
+DB_PASSWORD = os.getenv('POSTGRES_PASSWORD', default='password1')
+DB_HOST = os.getenv('DB_HOST', default='db')
+DB_PORT = os.getenv('DB_PORT', default='5432')
 
 SECRET_KEY = '6ol&8in(20sbp_s4qy$))r*ixyr-f&xcg-x6bl-)ri6v5zczu^'
 
@@ -21,7 +26,6 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework',
     'djoser',
-    # 'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'django_filters',
 ]
@@ -58,8 +62,12 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': DB_ENGINE,
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT
     }
 }
 
@@ -121,7 +129,6 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'api.serializers.UserCreateSerializer',
         'user': 'api.serializers.UserSerializer',
-        # 'token_create': 'api.serializers.TokenSerializer',
     },
     'PERMISSIONS': {
         'set_password': ['rest_framework.permissions.IsAuthenticated'],
@@ -131,9 +138,4 @@ DJOSER = {
         'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
     },
     'HIDE_USERS': False,
-}
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
-    "AUTH_HEADER_TYPES": ("JWT",),
 }

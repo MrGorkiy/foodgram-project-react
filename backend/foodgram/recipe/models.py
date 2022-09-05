@@ -1,47 +1,24 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.db import models
-from django.db.models import Q, F, CheckConstraint, UniqueConstraint
-from django.db.models.signals import post_save
 from django.core import validators
-from django.dispatch import receiver
+from django.db import models
+from django.db.models import CheckConstraint, F, Q, UniqueConstraint
 
 from .validators import validate_hex
 
 
-# class UserAccountManager(BaseUserManager):
-#     def create_user(self, email, username, first_name, last_name, password=None):
-#         if not email:
-#             raise ValueError('Users must have an email address')
-#
-#         email = self.normalize_email(email)
-#         user = self.model(email=email, username=username, first_name=first_name, last_name=last_name)
-#
-#         user.set_password(password)
-#         user.save()
-#
-#         return user
-
-
 class User(AbstractUser):
-    # username = models.CharField(
-    #     max_length=150, null=False, blank=False, unique=True
-    # )
     email = models.EmailField(
         max_length=254, unique=True, null=False, blank=False
     )
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
-    # bio = models.TextField(blank=True)
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ('username', 'first_name', 'last_name')
-
-    # objects = UserAccountManager()
+    REQUIRED_FIELDS = ("username", "first_name", "last_name")
 
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-        ordering = ('id',)
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+        ordering = ("id",)
 
     def __str__(self):
         return self.email
@@ -65,10 +42,12 @@ class Follow(models.Model):
         verbose_name = "Подписку"
         verbose_name_plural = "Подписки"
         constraints = [
-            CheckConstraint(check=~Q(author=F('user')),
-                            name='author_not_user'),
-            UniqueConstraint(fields=['user', 'author'],
-                             name='unique_author_unique')
+            CheckConstraint(
+                check=~Q(author=F("user")), name="author_not_user"
+            ),
+            UniqueConstraint(
+                fields=["user", "author"], name="unique_author_unique"
+            ),
         ]
 
 
@@ -94,7 +73,7 @@ class Ingredient(models.Model):
         verbose_name_plural = "Ингридиенты"
 
     def __str__(self):
-        return self.name
+        return f"{self.name}, {self.measurement_unit}."
 
 
 class Recipe(models.Model):
@@ -106,17 +85,14 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
     )
     image = models.ImageField(
-        'Изображение рецепта',
-        upload_to="recipe/",
-        blank=True,
-        null=True
+        "Изображение рецепта", upload_to="recipe/", blank=True, null=True
     )
     text = models.TextField("Описание")
     ingredients = models.ManyToManyField(
         Ingredient,
         related_name="ingredients",
         verbose_name="Ингредиенты",
-        through='IngredientRecipe'
+        through="IngredientRecipe",
     )
     tags = models.ManyToManyField(
         Tag,
@@ -124,14 +100,18 @@ class Recipe(models.Model):
         blank=True,
     )
     cooking_time = models.PositiveSmallIntegerField(
-        verbose_name='Время приготовления в минутах',
-        validators=[validators.MinValueValidator(
-            1, message='Мин. время приготовления 1 минута'), ])
+        verbose_name="Время приготовления в минутах",
+        validators=[
+            validators.MinValueValidator(
+                1, message="Мин. время приготовления 1 минута"
+            ),
+        ],
+    )
 
     class Meta:
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
-        ordering = ('-id', )
+        ordering = ("-id",)
 
     def __str__(self):
         return self.name
@@ -154,19 +134,23 @@ class IngredientRecipe(models.Model):
         default=1,
         validators=(
             validators.MinValueValidator(
-                1, message='Мин. количество ингридиентов 1'),),
-        verbose_name='Количество', )
+                1, message="Мин. количество ингридиентов 1"
+            ),
+        ),
+        verbose_name="Количество",
+    )
 
     class Meta:
         verbose_name = "Ингридиенты рецепта"
         verbose_name_plural = "Ингридиенты рецептов"
         constraints = [
             models.UniqueConstraint(
-                fields=['recipe', 'ingredient'],
-                name='unique ingredient')]
+                fields=["recipe", "ingredient"], name="unique ingredient"
+            )
+        ]
 
     def __str__(self):
-        return f'{self.amount}'
+        return f"{self.amount}"
 
 
 class Favorite(models.Model):
@@ -186,16 +170,15 @@ class Favorite(models.Model):
         verbose_name = "Избранное"
         verbose_name_plural = "Избранные"
 
-
     def __str__(self):
-        return f'Рецепт {self.recipe} в избранного {self.user}'
+        return f"Рецепт {self.recipe} в избранного {self.user}"
 
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         verbose_name="Пользователь",
-        related_name='shopping_cart',
+        related_name="shopping_cart",
         on_delete=models.CASCADE,
     )
     recipe = models.ForeignKey(
@@ -210,12 +193,4 @@ class ShoppingCart(models.Model):
         verbose_name_plural = "Корзины"
 
     def __str__(self):
-        return f'Рецепт {self.recipe} в корзине {self.user}'
-
-
-    # @receiver(post_save, sender=User)
-    # def create_shopping_cart(
-    #         sender, instance, created, **kwargs):
-    #     if created:
-    #         return ShoppingCart.objects.create(user=instance)
-
+        return f"Рецепт {self.recipe} в корзине {self.user}"
