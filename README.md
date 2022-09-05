@@ -24,24 +24,25 @@ scp docker-compose.yml username@server_ip:/home/<username>/
 ```bash
 scp default.conf <username>@<server_ip>:/home/<username>/
 ```
-- Заполнить в настройках репозитория секреты .env
 
-```
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-DB_HOST=db
-DB_PORT='5432'
-DOCKER_PASSWORD  # Пароль от докера
-DOCKER_USERNAME  # Имя пользователя докера
-USER  # Имя пользователя для хоста
-HOST  # адрес хсота
-PASSPHRASE  # Зашитный ключ к SSH
-SSH_KEY  # Приватный ключ к сереверу
-TELEGRAM_TO  # ID телеграмм чата
-TELEGRAM_TOKEN  # ключ к телеграм боту
-```
+- Заполните Secrets Actions по шаблону наполнения env переменных в GitHub Actions
+    ```
+    Наименование:        Содержание:
+    DB_ENGINE            django.db.backends.postgresql # указываем, что работаем с postgresql
+    DB_NAME              postgres # имя базы данных
+    POSTGRES_USER        postgres # логин для подключения к базе данных
+    POSTGRES_PASSWORD    postgres # пароль для подключения к БД (установите свой)
+    DB_HOST              db # название сервиса (контейнера)
+    DB_PORT              5432 # порт для подключения к БД 
+    HOST                 194.212.231.123 # ip сервера
+    USER                 MrGorkiy # UserName для подключению к серверу
+    SSH_KEY              # Приватный ключ доступа для подключению к серверу `cat ~/.ssh/id_rsa`
+    PASSPHRASE           # Серкретный ключ\фраза, если ваш ssh-ключ защищён фразой-паролем
+    TELEGRAM_TO          # id чата пользователя или чата куда бот будет отправлять результат успешного выполнения
+    TELEGRAM_TOKEN       # Токен бота ТГ для отправки уведомления
+    DOCKER_USERNAME      # Имя пользователя Docker для публикации образов
+    DOCKER_PASSWORD      # Пароль пользоывателя Docker
+    ```
 
 Скопировать на сервер настройки docker-compose.yml, default.conf из папки infra.
 
