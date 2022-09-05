@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 
-from recipes.models import Tag
+from recipe.models import Tag
 
 
 class Command(BaseCommand):

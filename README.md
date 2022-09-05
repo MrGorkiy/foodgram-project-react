@@ -35,7 +35,7 @@ touch .env
 - Заполнить в настройках репозитория секреты .env
 
 ```python
-DB_ENGINE='django.db.backends.postgresql'
+DB_ENGINE=django.db.backends.postgresql
 DB_NAME=
 POSTGRES_USER=
 POSTGRES_PASSWORD=

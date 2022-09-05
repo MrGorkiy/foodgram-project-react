@@ -13,9 +13,9 @@ services:
 #    image: mrgorkiy/foodgram_backend:latest
     restart: always
     volumes:
-      - data_value:/code/data/
-      - static_value:/code/static/
-      - media_value:/code/media/
+      - data_value:/app/data/
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - db
     env_file:
@@ -29,7 +29,7 @@ services:
       - ../frontend/:/app/result_build/
 
   nginx:
-    image: nginx:1.19.3
+    image: nginx:1.21.3-alpine
     ports:
       - "80:80"
     extra_hosts:
@@ -42,6 +42,7 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - frontend
+      - backend
 
 volumes:
   postgres_data:
