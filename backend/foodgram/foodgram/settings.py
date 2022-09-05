@@ -2,8 +2,8 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DB_ENGINE = os.getenv('DB_ENGINE', default='django.db.backends.sqlite3')
-DB_NAME = os.getenv('DB_NAME', default=os.path.join(BASE_DIR, 'db.sqlite3'))
+DB_ENGINE = os.getenv('DB_ENGINE', default='django.db.backends.postgresql')
+DB_NAME = os.getenv('DB_NAME', default='postgres')
 DB_USER = os.getenv('POSTGRES_USER', default='postgres')
 DB_PASSWORD = os.getenv('POSTGRES_PASSWORD', default='password1')
 DB_HOST = os.getenv('DB_HOST', default='db')
