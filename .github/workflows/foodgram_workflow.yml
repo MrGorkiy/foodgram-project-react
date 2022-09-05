@@ -47,12 +47,12 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
 
-      - name: Push to Docker Hub FrontEnd
-        uses: docker/build-push-action@v2
-        with:
-          context: frontend/
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+#      - name: Push to Docker Hub FrontEnd
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: frontend/
+#          push: true
+#          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
 
   deploy:
     if: ${{ github.ref }} == 'master'
