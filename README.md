@@ -1,4 +1,5 @@
 # Продуктовый помощник Foodgram (ДОПОЛНИТЬ)
+![example workflow](https://github.com/MrGorkiy/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 Проект доступен по адресу ...
 
@@ -15,10 +16,6 @@ sudo curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
-Создайте папку infra:
-```bash
-mkdir infra
-```
 - Перенести файлы docker-compose.yml и default.conf на сервер.
 
 ```bash
@@ -27,22 +24,23 @@ scp docker-compose.yml username@server_ip:/home/<username>/
 ```bash
 scp default.conf <username>@<server_ip>:/home/<username>/
 ```
-- Создайте файл .env в дериктории infra:
-
-```bash
-touch .env
-```
 - Заполнить в настройках репозитория секреты .env
 
-```python
+```
 DB_ENGINE=django.db.backends.postgresql
 DB_NAME=
 POSTGRES_USER=
 POSTGRES_PASSWORD=
 DB_HOST=db
 DB_PORT='5432'
-SECRET_KEY=
-ALLOWED_HOSTS=
+DOCKER_PASSWORD  # Пароль от докера
+DOCKER_USERNAME  # Имя пользователя докера
+USER  # Имя пользователя для хоста
+HOST  # адрес хсота
+PASSPHRASE  # Зашитный ключ к SSH
+SSH_KEY  # Приватный ключ к сереверу
+TELEGRAM_TO  # ID телеграмм чата
+TELEGRAM_TOKEN  # ключ к телеграм боту
 ```
 
 Скопировать на сервер настройки docker-compose.yml, default.conf из папки infra.
