@@ -12,7 +12,7 @@ from recipe.models import (Favorite, Follow, Ingredient, IngredientRecipe,
 ERR_MSG = "Не удается войти в систему с предоставленными учетными данными."
 
 
-class TokenSerializer(serializers.Serializer):
+class TokenSerializer(serializers.Serializer): # noqa
     email = serializers.CharField(label="Email", write_only=True)
     password = serializers.CharField(
         label="Пароль",
@@ -74,7 +74,8 @@ class UserCustomCreateSerializer(UserCreateSerializer):
             "password",
         )
 
-    def validate_password(self, password):
+    @staticmethod
+    def validate_password(password):
         validators.validate_password(password)
         return password
 
@@ -93,13 +94,16 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
-    def get_name(self, obj):
+    @staticmethod
+    def get_name(obj):
         return obj.recipe.name
 
-    def get_image(self, obj):
+    @staticmethod
+    def get_image(obj):
         return obj.recipe.image.url
 
-    def get_cooking_time(self, obj):
+    @staticmethod
+    def get_cooking_time(obj):
         return obj.recipe.cooking_time
 
 
@@ -117,13 +121,16 @@ class FavoriteSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
-    def get_name(self, obj):
+    @staticmethod
+    def get_name(obj):
         return obj.recipe.name
 
-    def get_image(self, obj):
+    @staticmethod
+    def get_image(obj):
         return obj.recipe.image.url
 
-    def get_cooking_time(self, obj):
+    @staticmethod
+    def get_cooking_time(obj):
         return obj.recipe.cooking_time
 
 
@@ -265,12 +272,14 @@ class RecipeCreatySerializer(serializers.ModelSerializer):
                 )
         return data
 
-    def validate_cooking_time(self, cooking_time):
+    @staticmethod
+    def validate_cooking_time(cooking_time):
         if int(cooking_time) < 1:
             raise serializers.ValidationError("Время приготовления >= 1!")
         return cooking_time
 
-    def validate_ingredients(self, ingredients):
+    @staticmethod
+    def validate_ingredients(ingredients):
         if not ingredients:
             raise serializers.ValidationError("Мин. 1 ингредиент в рецепте!")
         for ingredient in ingredients:
@@ -280,7 +289,8 @@ class RecipeCreatySerializer(serializers.ModelSerializer):
                 )
         return ingredients
 
-    def create_ingredients(self, ingredients, recipe):
+    @staticmethod
+    def create_ingredients(ingredients, recipe):
         for ingredient in ingredients:
             IngredientRecipe.objects.create(
                 recipe=recipe,
@@ -370,11 +380,12 @@ class FollowSerializer(serializers.ModelSerializer):
             return False
         return None
 
-    def get_recipes_count(self, obj):
+    @staticmethod
+    def get_recipes_count(obj):
         return obj.author.recipe_user.all().count()
 
 
-class UserPasswordSerializer(serializers.Serializer):
+class UserPasswordSerializer(serializers.Serializer): # noqa
     new_password = serializers.CharField(label="Новый пароль")
     current_password = serializers.CharField(label="Текущий пароль")
 
@@ -384,7 +395,8 @@ class UserPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError(ERR_MSG, code="authorization")
         return current_password
 
-    def validate_new_password(self, new_password):
+    @staticmethod
+    def validate_new_password(new_password):
         validators.validate_password(new_password)
         return new_password
 

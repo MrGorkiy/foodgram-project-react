@@ -4,24 +4,24 @@ from django.core.exceptions import ValidationError
 from recipe.models import Ingredient, Recipe, User
 
 
-class TagsMultipleChoiceField(filters.fields.MultipleChoiceField):
-    def validate(self, value):
-        if self.required and not value:
-            raise ValidationError(
-                self.error_messages["required"], code="required"
-            )
-        for val in value:
-            if val in self.choices and not self.valid_value(val):
-                raise ValidationError(
-                    self.error_messages["invalid_choice"],
-                    code="invalid_choice",
-                    params={"value": val},
-                )
-
-
-class TagsFilter(filters.AllValuesMultipleFilter):
-    field_class = TagsMultipleChoiceField
-
+# class TagsMultipleChoiceField(filters.fields.MultipleChoiceField):
+#     def validate(self, value):
+#         if self.required and not value:
+#             raise ValidationError(
+#                 self.error_messages["required"], code="required"
+#             )
+#         for val in value:
+#             if val in self.choices and not self.valid_value(val):
+#                 raise ValidationError(
+#                     self.error_messages["invalid_choice"],
+#                     code="invalid_choice",
+#                     params={"value": val},
+#                 )
+#
+#
+# class TagsFilter(filters.AllValuesMultipleFilter):
+#     field_class = TagsMultipleChoiceField
+#
 
 class IngredientFilter(filters.FilterSet):
     """Фильтрация ингридиентов"""
