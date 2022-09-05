@@ -55,16 +55,16 @@ sudo docker-compose up -d
 Для доступа к контейнеру выполните следующие команды:
 
 ```bash
-sudo docker-compose exec backend python manage.py makemigrations
+docker-compose exec backend python manage.py makemigrations
 ```
 ```bash
-sudo docker-compose exec backend python manage.py migrate --noinput
+docker-compose exec backend python manage.py migrate --noinput
 ```
 ```bash
-sudo docker-compose exec backend python manage.py createsuperuser
+docker-compose exec backend python manage.py createsuperuser
 ```
 ```bash
-sudo docker-compose exec backend python manage.py collectstatic --no-input
+docker-compose exec backend python manage.py collectstatic --no-input
 ```
 
 Дополнительно можно наполнить DB ингредиентами и тэгами:

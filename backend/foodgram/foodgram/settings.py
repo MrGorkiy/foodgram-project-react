@@ -13,7 +13,7 @@ SECRET_KEY = '6ol&8in(20sbp_s4qy$))r*ixyr-f&xcg-x6bl-)ri6v5zczu^'
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["51.250.19.53", "localhost", "mrgorkiy.hopto.org"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
