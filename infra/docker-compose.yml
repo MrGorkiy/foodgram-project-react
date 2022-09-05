@@ -9,8 +9,8 @@ services:
       - ./.env\
 
   backend:
-    build: ../backend/foodgram
-#    image: mrgorkiy/foodgram_backend:latest
+#    build: ../backend/foodgram
+    image: mrgorkiy/foodgram_backend:latest
     restart: always
     volumes:
       - data_value:/app/data/
@@ -22,11 +22,14 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+#    build:
+#      context: ../frontend
+#      dockerfile: Dockerfile
+    image: mrgorkiy/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on:
+      - backend
 
   nginx:
     image: nginx:1.21.3-alpine

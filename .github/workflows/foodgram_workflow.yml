@@ -40,14 +40,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Push to Docker Hub
+      - name: Push to Docker Hub BackEnd
         uses: docker/build-push-action@v2
         with:
           context: backend/foodgram
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
 
-      - name: Push frontend
+      - name: Push to Docker Hub FrontEnd
         uses: docker/build-push-action@v2
         with:
           context: frontend/
@@ -59,19 +59,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
     steps:
-      - name: pull docker image
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
-            cd infra/
-            sudo docker-compose stop
-            sudo docker-compose rm backend
+#      - name: pull docker image
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USER }}
+#          key: ${{ secrets.SSH_KEY }}
+#          passphrase: ${{ secrets.PASSPHRASE }}
+#          script: |
+#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+#            cd infra/
+#            sudo docker-compose stop
+#            sudo docker-compose rm backend
 
       - name: docker-compose up
         uses: appleboy/ssh-action@master
@@ -81,7 +81,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            cd infra/
+            sudo docker-compose stop
+            sudo docker-compose rm backend
             sudo touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
