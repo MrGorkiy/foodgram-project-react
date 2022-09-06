@@ -130,3 +130,11 @@ dmypy.json
 
 # .idea
 .idea
+
+# облегчение для ревью
+backend/foodgram/media/
+backend/foodgram/data/
+/frontend/
+/docs/
+/data/
+/backend/foodgram/data/
