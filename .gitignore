@@ -133,8 +133,7 @@ dmypy.json
 
 # облегчение для ревью
 backend/foodgram/media/
+frontend/
+docs/
+data/
 backend/foodgram/data/
-/frontend/
-/docs/
-/data/
-/backend/foodgram/data/
