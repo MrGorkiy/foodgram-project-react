@@ -6,13 +6,21 @@ from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 
-from recipe.models import (Favorite, Follow, Ingredient, IngredientRecipe,
-                           Recipe, ShoppingCart, Tag, User)
+from recipe.models import (
+    Favorite,
+    Follow,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Tag,
+    User,
+)
 
 ERR_MSG = "Не удается войти в систему с предоставленными учетными данными."
 
 
-class TokenSerializer(serializers.Serializer): # noqa
+class TokenSerializer(serializers.Serializer):  # noqa
     email = serializers.CharField(label="Email", write_only=True)
     password = serializers.CharField(
         label="Пароль",
@@ -28,9 +36,8 @@ class TokenSerializer(serializers.Serializer): # noqa
         if email and password:
             user = authenticate(email=email, password=password)
             if not user:
-                raise serializers.ValidationError(
-                    ERR_MSG, code="authorization"
-                )
+                raise serializers.ValidationError(ERR_MSG,
+                                                  code="authorization")
         else:
             msg = 'Необходимо указать "адрес электронной почты" и "пароль".'
             raise serializers.ValidationError(msg, code="authorization")
@@ -63,6 +70,7 @@ class CustomUserSerializer(UserSerializer):
 
 
 class UserCustomCreateSerializer(UserCreateSerializer):
+
     class Meta:
         model = User
         fields = (
@@ -135,6 +143,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Tag
         fields = (
@@ -146,6 +155,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Ingredient
         fields = ("id", "name", "measurement_unit")
@@ -153,8 +163,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class IngredientsqRecipeSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.ReadOnlyField(
-        source="ingredient.measurement_unit"
-    )
+        source="ingredient.measurement_unit")
     id = serializers.ReadOnlyField(source="ingredient.id")
     name = serializers.ReadOnlyField(source="ingredient.name")
 
@@ -328,6 +337,7 @@ class RecipeCreatySerializer(serializers.ModelSerializer):
 
 
 class RecipeFollowSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Recipe
         fields = (
@@ -385,7 +395,7 @@ class FollowSerializer(serializers.ModelSerializer):
         return obj.author.recipe_user.all().count()
 
 
-class UserPasswordSerializer(serializers.Serializer): # noqa
+class UserPasswordSerializer(serializers.Serializer):  # noqa
     new_password = serializers.CharField(label="Новый пароль")
     current_password = serializers.CharField(label="Текущий пароль")
 

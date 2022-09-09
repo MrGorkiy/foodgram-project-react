@@ -7,6 +7,8 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - .env
+#    networks:
+#      - app-network
 
   backend:
     image: mrgorkiy/foodgram_backend:latest
@@ -51,7 +53,6 @@ services:
 
 #  certbot:
 #    image: certbot/certbot
-#    container_name: certbot
 #    volumes:
 #      - certbot-etc:/etc/letsencrypt
 #      - certbot-var:/var/lib/letsencrypt

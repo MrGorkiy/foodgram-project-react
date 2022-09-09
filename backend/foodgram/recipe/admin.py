@@ -1,7 +1,18 @@
 from django.contrib import admin
 
-from .models import (Favorite, Follow, Ingredient, IngredientRecipe, Recipe,
-                     ShoppingCart, Tag, User)
+from .form import TagForm
+from .models import (
+    Favorite,
+    Follow,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Tag,
+    User,
+)
+
+EMPTY_MSG = "-пусто-"
 
 
 @admin.register(User)
@@ -21,7 +32,7 @@ class UserAdmin(admin.ModelAdmin):
         "username",
         "email",
     )
-    empty_value_display = "-пусто-"
+    empty_value_display = EMPTY_MSG
 
 
 @admin.register(Follow)
@@ -38,14 +49,17 @@ class FollowAdmin(admin.ModelAdmin):
         "author",
         "user",
     )
-    empty_value_display = "-пусто-"
+    empty_value_display = EMPTY_MSG
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
+    form = TagForm
+
     list_display = (
         "pk",
         "name",
+        "color",
         "slug",
     )
     search_fields = (
@@ -56,7 +70,7 @@ class TagAdmin(admin.ModelAdmin):
         "name",
         "slug",
     )
-    empty_value_display = "-пусто-"
+    empty_value_display = EMPTY_MSG
 
 
 @admin.register(Ingredient)
@@ -69,7 +83,7 @@ class IngredientAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     list_editable = ("measurement_unit",)
     list_filter = ("name",)
-    empty_value_display = "-пусто-"
+    empty_value_display = EMPTY_MSG
 
 
 class RecipeIngredientAdmin(admin.StackedInline):
@@ -101,7 +115,7 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     inlines = (RecipeIngredientAdmin,)
     readonly_fields = ["get_favorite_count"]
-    empty_value_display = "-пусто-"
+    empty_value_display = EMPTY_MSG
 
     def get_tags(self, obj):
         list_ = [_.name for _ in obj.tags.all()]
@@ -147,7 +161,7 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
         "amount",
     )
     list_filter = ("recipe",)
-    empty_value_display = "-пусто-"
+    empty_value_display = EMPTY_MSG
 
 
 @admin.register(Favorite)
@@ -166,7 +180,7 @@ class FavoriteAdmin(admin.ModelAdmin):
         "recipe",
         "user",
     )
-    empty_value_display = "-пусто-"
+    empty_value_display = EMPTY_MSG
 
     def get_count(self, obj):
         return obj.recipe.recipe_favorite.count()
@@ -190,7 +204,7 @@ class ShoppingCartAdmin(admin.ModelAdmin):
         "recipe",
         "user",
     )
-    empty_value_display = "-пусто-"
+    empty_value_display = EMPTY_MSG
 
     def get_recipe(self, obj):
         return [f"{obj.recipe.name}"]

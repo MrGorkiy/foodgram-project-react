@@ -1,34 +1,36 @@
-import io
-
-from django.db.models import Sum
-from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfgen import canvas
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action, api_view
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import (AllowAny, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework.response import Response
 
-from recipe.models import (Favorite, Follow, Ingredient, Recipe, ShoppingCart,
-                           Tag, User)
+from recipe.models import Favorite, Follow, Ingredient, Recipe, ShoppingCart, \
+    Tag, User
+from .download_shopping_cart import download_shopping_cart
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import ReadOnly
-from .serializers import (CustomUserSerializer, FavoriteSerializer,
-                          FollowSerializer, IngredientSerializer,
-                          RecipeCreatySerializer, RecipeSerializer,
-                          ShoppingCartSerializer, TagSerializer,
-                          TokenSerializer, UserCustomCreateSerializer,
-                          UserPasswordSerializer)
-
-FILENAME = "shoppingcart.pdf"
+from .serializers import (
+    CustomUserSerializer,
+    FavoriteSerializer,
+    FollowSerializer,
+    IngredientSerializer,
+    RecipeCreatySerializer,
+    RecipeSerializer,
+    ShoppingCartSerializer,
+    TagSerializer,
+    TokenSerializer,
+    UserCustomCreateSerializer,
+    UserPasswordSerializer,
+)
 
 
 class FollowViewSet(viewsets.ModelViewSet):
@@ -98,7 +100,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
     )
     def favorite(self, request, pk=None):
         """Добавляет и удаляет рецепты в избранное."""
-
         if request.method == "POST":
             serializer = self.get_serializer(data=request.data)
             if serializer.is_valid():
@@ -109,12 +110,10 @@ class RecipesViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 serializer.save(user=self.request.user, recipe=recipe)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+                return Response(serializer.data,
+                                status=status.HTTP_201_CREATED)
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
         elif request.method == "DELETE":
             favorite = Favorite.objects.filter(recipe=pk, user=request.user)
             if favorite:
@@ -136,25 +135,21 @@ class RecipesViewSet(viewsets.ModelViewSet):
     )
     def shopping_cart(self, request, pk=None):
         """Добавляет и удаляет рецепты в список покупок."""
-
         if request.method == "POST":
             serializer = self.get_serializer(data=request.data)
             if serializer.is_valid():
                 recipe = Recipe.objects.get(pk=pk)
-                if ShoppingCart.objects.filter(
-                    recipe=recipe, user=request.user
-                ):
+                if ShoppingCart.objects.filter(recipe=recipe,
+                                               user=request.user):
                     return Response(
                         {"errors": "Рецепт уже добавлен в список покупок"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 serializer.save(user=self.request.user, recipe=recipe)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+                return Response(serializer.data,
+                                status=status.HTTP_201_CREATED)
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
         elif request.method == "DELETE":
             recipe = Recipe.objects.get(pk=pk)
             shopping_cart = ShoppingCart.objects.filter(
@@ -171,51 +166,11 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @action(
-        detail=False, methods=["get"], permission_classes=(IsAuthenticated,)
-    )
+    @action(detail=False, methods=["get"],
+            permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         """Качаем список покупок."""
-
-        buffer = io.BytesIO()
-        page = canvas.Canvas(buffer)
-        pdfmetrics.registerFont(
-            TTFont("DejaVuSerif", "DejaVuSerif.ttf", "UTF-8")
-        )
-        x_position, y_position = 50, 800
-        shopping_cart = (
-            ShoppingCart.objects.filter(user=self.request.user)
-            .values(
-                "recipe__ingredients__name",
-                "recipe__ingredients__measurement_unit",
-            )
-            .annotate(amount=Sum("recipe__recipe__amount"))
-            .order_by()
-        )
-        page.setFont("DejaVuSerif", 14)
-        if shopping_cart:
-            indent = 20
-            page.drawString(x_position, y_position, "Cписок покупок:")
-            for index, recipe in enumerate(shopping_cart, start=1):
-                page.drawString(
-                    x_position,
-                    y_position - indent,
-                    f'{index}. {recipe["recipe__ingredients__name"]} - '
-                    f'{recipe["amount"]} '
-                    f'{recipe["recipe__ingredients__measurement_unit"]}.',
-                )
-                y_position -= 15
-                if y_position <= 50:
-                    page.showPage()
-                    y_position = 800
-            page.save()
-            buffer.seek(0)
-            return FileResponse(buffer, as_attachment=True, filename=FILENAME)
-        page.setFont("DejaVuSerif", 24)
-        page.drawString(x_position, y_position, "Cписок покупок пуст!")
-        page.save()
-        buffer.seek(0)
-        return FileResponse(buffer, as_attachment=True, filename=FILENAME)
+        return download_shopping_cart(self.request.user)
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
@@ -274,7 +229,6 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscribe(self, request, id=None):
         """Добавляет и удаляет пользователей в подписчики."""
-
         if request.method == "POST":
             author = get_object_or_404(User, pk=id)
             if request.user.id == int(id):
@@ -318,21 +272,17 @@ class AuthToken(ObtainAuthToken):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         token, created = Token.objects.get_or_create(user=user)
-        return Response(
-            {"auth_token": token.key}, status=status.HTTP_201_CREATED
-        )
+        return Response({"auth_token": token.key},
+                        status=status.HTTP_201_CREATED)
 
 
 @api_view(["post"])
 def set_password(request):
     """Изменение пароля."""
-
-    serializer = UserPasswordSerializer(
-        data=request.data, context={"request": request}
-    )
+    serializer = UserPasswordSerializer(data=request.data,
+                                        context={"request": request})
     if serializer.is_valid():
         serializer.save()
-        return Response(
-            {"message": "Пароль изменен!"}, status=status.HTTP_201_CREATED
-        )
+        return Response({"message": "Пароль изменен!"},
+                        status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

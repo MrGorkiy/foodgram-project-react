@@ -26,12 +26,10 @@ class RecipeFilter(filters.FilterSet):
     is_in_shopping_cart = filters.ChoiceFilter(
         choices=RECIPE_CHOICES, method="get_is_in"
     )
-    is_favorited = filters.ChoiceFilter(
-        choices=RECIPE_CHOICES, method="get_is_in"
-    )
-    tags = filters.AllValuesMultipleFilter(
-        field_name="tags__slug", label="Ссылка"
-    )
+    is_favorited = filters.ChoiceFilter(choices=RECIPE_CHOICES,
+                                        method="get_is_in")
+    tags = filters.AllValuesMultipleFilter(field_name="tags__slug",
+                                           label="Ссылка")
 
     def get_is_in(self, queryset, name, value):
         """
