@@ -40,29 +40,24 @@ services:
       - ./docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+#      - ./data/certbot/conf:/etc/letsencrypt
+#      - ./data/certbot/www:/var/www/certbot
     depends_on:
       - frontend
       - backend
 
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    depends_on:
-      -   nginx
-    command: certonly --webroot --webroot-path=./data/certbot --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
+#  certbot:
+#    image: certbot/certbot
+#    volumes:
+#      - ./data/certbot/conf:/etc/letsencrypt
+#      - ./data/certbot/www:/var/www/certbot
+#    depends_on:
+#      - nginx
+#    command: certonly --webroot --webroot-path=./data/certbot --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
 
 volumes:
   postgres_data:
   static_value:
   media_value:
   data_value:
-#  certbot-etc:
-#  certbot-var:
-#
-#networks:
-#  app-network:
-#    driver: bridge
+
