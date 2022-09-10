@@ -11,7 +11,7 @@ DB_PORT = os.getenv("DB_PORT", default="5432")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = os.getenv(
     "HOSTS", default="*"
