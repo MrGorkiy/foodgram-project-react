@@ -43,30 +43,30 @@ services:
       - ./docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
-#      - certbot-etc:/etc/letsencrypt
-#      - certbot-var:/var/lib/letsencrypt
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
 #    networks:
 #      - app-network
     depends_on:
       - frontend
       - backend
 
-#  certbot:
-#    image: certbot/certbot
-#    volumes:
-#      - certbot-etc:/etc/letsencrypt
-#      - certbot-var:/var/lib/letsencrypt
-#    depends_on:
-#      -   nginx
-#    command: certonly --webroot --webroot-path=/var/www/html --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      -   nginx
+    command: certonly --webroot --webroot-path=/var/www/html --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
 
 volumes:
   postgres_data:
   static_value:
   media_value:
   data_value:
-#  certbot-etc:
-#  certbot-var:
+  certbot-etc:
+  certbot-var:
 #
 #networks:
 #  app-network:
