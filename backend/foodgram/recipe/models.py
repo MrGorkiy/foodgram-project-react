@@ -7,7 +7,8 @@ from .validators import validate_hex
 
 
 class User(AbstractUser):
-    email = models.EmailField(max_length=254, unique=True, null=False, blank=False)
+    email = models.EmailField(max_length=254, unique=True, null=False,
+                              blank=False)
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     USERNAME_FIELD = "email"
@@ -129,7 +130,9 @@ class IngredientRecipe(models.Model):
     amount = models.PositiveSmallIntegerField(
         default=1,
         validators=(
-            validators.MinValueValidator(1, message="Мин. количество ингридиентов 1"),
+            validators.MinValueValidator(
+                1,
+                message="Мин. количество ингридиентов 1"),
         ),
         verbose_name="Количество",
     )
