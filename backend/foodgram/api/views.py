@@ -13,8 +13,8 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 
-from recipe.models import Favorite, Follow, Ingredient, Recipe, ShoppingCart, \
-    Tag, User
+from recipe.models import (Favorite, Follow, Ingredient, Recipe, ShoppingCart,
+                           Tag, User)
 from .download_shopping_cart import download_shopping_cart
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import ReadOnly
