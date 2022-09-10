@@ -7,8 +7,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - .env
-#    networks:
-#      - app-network
+
 
   backend:
     image: mrgorkiy/foodgram_backend:latest
@@ -21,8 +20,6 @@ services:
       - db
     env_file:
       - .env
-#    networks:
-#      - app-network
 
   frontend:
     image: mrgorkiy/foodgram_frontend:latest
@@ -35,6 +32,7 @@ services:
     image: nginx:1.21.3-alpine
     ports:
       - "80:80"
+      - "443:443"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -43,23 +41,21 @@ services:
       - ./docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
-#      - certbot-etc:/etc/letsencrypt
-#      - certbot-var:/var/lib/letsencrypt
-#    networks:
-#      - app-network
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+
     depends_on:
       - frontend
       - backend
 
-#  certbot:
-#    image: certbot/certbot
-#    volumes:
-#      - certbot-etc:/etc/letsencrypt
-#      - certbot-var:/var/lib/letsencrypt
-#      - ../frontend/build:/usr/share/nginx/html/
-#    depends_on:
-#      -   nginx
-#    command: certonly --webroot --webroot-path=../frontend/build:/usr/share/nginx/html/ --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    depends_on:
+      -   nginx
+    command: certonly --webroot --webroot-path=./data/certbot --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
 
 volumes:
   postgres_data:
