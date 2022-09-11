@@ -15,6 +15,8 @@ services:
       - data_value:/app/data/
       - static_value:/app/static/
       - media_value:/app/media/
+      - ./certbot/www:/var/www/certbot/
+      - ./certbot/conf/:/etc/nginx/ssl/
     depends_on:
       - db
     env_file:
@@ -24,6 +26,8 @@ services:
     image: mrgorkiy/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
+      - ./certbot/www:/var/www/certbot/
+      - ./certbot/conf/:/etc/nginx/ssl/
     depends_on:
       - backend
 
@@ -40,8 +44,8 @@ services:
       - ./docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
-      - ./certbot/www:/var/www/certbot/:ro
-      - ./certbot/conf/:/etc/nginx/ssl/:ro
+      - ./certbot/www:/var/www/certbot/
+      - ./certbot/conf/:/etc/nginx/ssl/
     depends_on:
       - frontend
       - backend
@@ -49,11 +53,11 @@ services:
   certbot:
     image: certbot/certbot
     volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
-      - ./certbot/conf/:/etc/letsencrypt/:rw
-    depends_on:
-      - nginx
-#    command: certonly --webroot --webroot-path=./data/certbot --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
+      - ./certbot/www/:/var/www/certbot/
+      - ./certbot/conf/:/etc/letsencrypt/
+#    depends_on:
+#      - nginx
+    command: certonly --webroot --webroot-path=/var/www/certbot/ --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
 
 volumes:
   postgres_data:
