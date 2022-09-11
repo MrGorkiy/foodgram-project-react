@@ -46,16 +46,18 @@ services:
       - media_value:/var/html/media/
       - ./certbot/www:/var/www/certbot/
       - ./certbot/conf/:/etc/nginx/ssl/
+      - ./certbot/data:/var/www/certbot
     depends_on:
       - frontend
       - backend
 
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./certbot/www/:/var/www/certbot/
-      - ./certbot/conf/:/etc/letsencrypt/
-    command: certonly --webroot --webroot-path /var/www/certbot/ --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
+#  certbot:
+#    image: certbot/certbot
+#    volumes:
+#      - ./certbot/www/:/var/www/certbot/
+#      - ./certbot/conf/:/etc/letsencrypt/
+#      - ./certbot/data:/var/www/certbot
+#    command: certonly --webroot --webroot-path /var/www/certbot/ --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
 
 volumes:
   postgres_data:
