@@ -55,9 +55,7 @@ services:
     volumes:
       - ./certbot/www/:/var/www/certbot/
       - ./certbot/conf/:/etc/letsencrypt/
-#    depends_on:
-#      - nginx
-    command: certonly --webroot --webroot-path=/var/www/certbot/ --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
+    command: certonly --webroot --webroot-path /var/www/certbot/ --email mbrysin@bk.ru --agree-tos --no-eff-email --staging -d mrgorkiy.sytes.net
 
 volumes:
   postgres_data:
