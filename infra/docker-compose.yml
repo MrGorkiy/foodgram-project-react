@@ -45,7 +45,7 @@ services:
       - static_value:/var/html/static/
       - media_value:/var/html/media/
       - ./certbot/www:/var/www/certbot/
-      - ./certbot/conf/:/etc/letsencrypt/
+      - ./certbot/conf/:/etc/nginx/ssl/
     depends_on:
       - frontend
       - backend
