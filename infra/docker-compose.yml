@@ -46,7 +46,7 @@ services:
       - media_value:/var/html/media/
       - ./certbot/www:/var/www/certbot/
       - ./certbot/conf/:/etc/nginx/ssl/
-      - ./certbot/data:/var/www/certbot
+      - ./certbot/data:/var/www/certbots
     depends_on:
       - frontend
       - backend
