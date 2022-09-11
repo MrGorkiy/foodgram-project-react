@@ -47,6 +47,8 @@ services:
       - ./certbot/www:/var/www/certbot/
       - ./certbot/conf/:/etc/nginx/ssl/
       - ./certbot/data:/var/www/certbots
+      - ./etc/letsencrypt/:/etc/letsencrypt/
+#      - ./etc/letsencrypt/live/mrgorkiy.sytes.net/:/etc/letsencrypt/live/mrgorkiy.sytes.net/
     depends_on:
       - frontend
       - backend
