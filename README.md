@@ -127,4 +127,4 @@ python manage.py runserver
 http://127.0.0.1/api/docs/
 ```
 
-Автор: [Брысин Максим (Mr. Gorkiy)](https://github.com/MrGorkiy)
+Автор: [MrGorkiy](https://github.com/MrGorkiy)
