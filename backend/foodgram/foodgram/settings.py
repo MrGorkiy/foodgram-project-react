@@ -15,7 +15,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = os.getenv(
     "HOSTS", default="*"
-)  # ["51.250.19.53", "localhost", "mrgorkiy.sytes.net"]
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
